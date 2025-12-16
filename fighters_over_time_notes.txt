@@ -1,0 +1,34 @@
+Fighters Over Time Visualization - README
+==========================================
+
+Overview
+--------
+Generates time series plots showing fighter performance metrics (wins, win rate, fights) over years for top fighters by gender.
+
+Data Processing
+---------------
+1. Loads per_fight_data.csv and parses dates (M/D/YYYY format)
+2. Extracts year from each fight date
+3. For each fight, determines winner (Red/Blue) and assigns wins/losses to both fighters
+4. Aggregates statistics per fighter per year: wins, losses, fights, win_rate
+5. Filters fighters: minimum 5 total fights and 3+ years of data
+6. Aggregates across all weight classes (ignores weight class boundaries)
+
+Fighter Selection
+-----------------
+- Selects top N fighters per gender (default: 2) ranked by total wins
+- Aggregates all fight data across weight classes for selected fighters
+
+Plot Generation
+---------------
+Creates 6 plots total (3 features × 2 genders):
+- Features: wins per year, win rate, fights per year
+- One line per fighter, color-coded
+- X-axis: year, Y-axis: feature value
+- Win rate formatted as percentage (0-100%)
+- Saved as PNG files (300 DPI) to plots/ directory
+
+Output Files
+------------
+Format: {feature}_over_time_top{N}_{gender}.png
+Example: wins_over_time_top2_male.png

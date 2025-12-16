@@ -1,0 +1,38 @@
+Visualizations - README
+========================
+
+Overview
+--------
+Generates statistical comparison plots between male and female fighters, including distribution comparisons, correlation analysis, and feature importance for predicting wins.
+
+Data Processing
+---------------
+1. Loads fighter_stats_with_gender.csv
+2. Separates fighters by gender (MALE/FEMALE)
+3. Filters to top 1000 fighters per gender, ranked by total wins
+4. Handles missing values: drops NaN for distributions, imputes mean for ML models
+
+Visualization Types
+------------------
+1. Distribution Plots (4 plots):
+   - KDE probability distributions comparing male vs female
+   - Features: height, weight, reach, age
+   - Displays mean, std, sample size statistics
+   - Output: {feature}_distribution_gender_comparison.png
+
+2. Correlation Heatmaps (2 plots):
+   - Correlation matrix between all numeric features and wins
+   - Separate plots for male and female fighters
+   - Upper triangle masked, coolwarm colormap
+   - Output: correlation_heatmap_{gender}.png
+
+3. Feature Importance Plots (2 plots):
+   - Random Forest regression to predict wins from features
+   - Feature importance scores displayed as horizontal bars
+   - Separate models for male and female
+   - Output: feature_importance_{gender}.png
+
+Output
+------
+Total: 8 plots (4 distributions + 2 correlations + 2 feature importance)
+All saved as PNG files (300 DPI) to plots/ directory
