@@ -1,0 +1,240 @@
+================================================================================
+MMA Betting Odds Accuracy Analysis - Visualization Notes
+================================================================================
+
+OVERVIEW
+--------
+The odds_visualization.py script analyzes betting odds accuracy in MMA fights by
+comparing predicted outcomes (based on odds) with actual fight results. The script
+processes fight data from per_fight_data.csv, which contains betting odds (R_odds,
+B_odds) and actual winners for each fight.
+
+The analysis converts American odds to implied probabilities, determines favorites
+and underdogs, and evaluates how well bookmakers' odds predict fight outcomes.
+Seven comprehensive visualizations are generated to explore different aspects of
+odds accuracy and betting patterns.
+
+DATA PREPARATION
+----------------
+- Loads fight data with odds and outcomes
+- Converts American odds to implied probabilities
+- Determines favorites (fighters with negative odds or smaller positive odds)
+- Calculates odds differences as a measure of confidence/competitiveness
+- Filters out invalid data (missing odds, draws, etc.)
+- Final dataset: ~4,167 valid fights with complete odds and outcome data
+
+================================================================================
+VISUALIZATION DESCRIPTIONS
+================================================================================
+
+1. ODDS CONFIDENCE VS ACCURACY
+   ----------------------------
+   File: 1_confidence_vs_accuracy.png
+   
+   Description:
+   A scatter plot showing the relationship between odds difference (confidence
+   level) and prediction accuracy. Each point represents a bin of fights grouped
+   by similar odds differences.
+   
+   What it plots:
+   - X-axis: Odds difference (absolute difference between R_odds and B_odds)
+   - Y-axis: Favorite win rate (percentage of times the favorite actually won)
+   - Point size: Number of fights in each bin
+   - Point color: Number of fights (viridis colormap)
+   - Reference line: 50% accuracy (random chance baseline)
+   
+   Insights it attempts to answer:
+   - Does higher odds confidence (larger odds difference) correlate with better
+     prediction accuracy?
+   - At what confidence levels do bookmakers perform best?
+   - Are there confidence thresholds where accuracy plateaus or drops?
+   - How does sample size vary across different confidence levels?
+
+
+2. FAVORITE VS UNDERDOG WIN RATES
+   --------------------------------
+   File: 2_favorite_vs_underdog_win_rates.png
+   
+   Description:
+   Bar charts comparing win rates between favorites and underdogs, both overall
+   and broken down by odds difference categories.
+   
+   What it plots:
+   - Left panel: Overall win rates for favorites vs underdogs
+   - Right panel: Favorite win rates across different odds difference categories
+     (Very Close, Close, Moderate, Large, Very Large)
+   - Bar colors: Green for favorites, red for underdogs (left); color gradient
+     based on win rate (right)
+   - Sample sizes (n) displayed on each bar
+   
+   Insights it attempts to answer:
+   - What percentage of the time do favorites actually win?
+   - Do favorites win more often than underdogs, and by how much?
+   - How does favorite win rate change as the odds difference increases?
+   - Are bookmakers correctly identifying favorites, or is there systematic bias?
+
+
+3. UPSET FREQUENCY BY ODDS MARGIN
+   --------------------------------
+   File: 3_upset_frequency_by_margin.png
+   
+   Description:
+   Visualizations showing how often upsets (underdog wins) occur at different
+   odds difference ranges, helping identify patterns in unexpected outcomes.
+   
+   What it plots:
+   - Left panel: Upset rate (%) by odds difference bins (0-25, 25-50, 50-100,
+     100-150, 150-200, 200-300, 300-500, 500+)
+   - Right panel: Stacked bar chart showing absolute counts of favorite wins
+     vs upsets for each odds difference range
+   - Colors: Red gradient for upset rates; green (favorite wins) and red
+     (upsets) in stacked chart
+   
+   Insights it attempts to answer:
+   - At what odds difference ranges do upsets occur most frequently?
+   - Are upsets more common in close fights or lopsided matchups?
+   - How does the frequency of upsets change as bookmaker confidence increases?
+   - What is the relationship between odds margin and upset probability?
+
+
+4. TEMPORAL TRENDS
+   ----------------
+   File: 4_temporal_trends.png
+   
+   Description:
+   Time series analysis showing how odds accuracy and confidence levels have
+   changed over time, revealing trends in bookmaker performance and market
+   evolution.
+   
+   What it plots:
+   - Top left: Monthly accuracy trends (favorite win rate over time)
+   - Top right: Yearly accuracy trends with sample sizes
+   - Bottom left: Monthly average odds difference (confidence level) over time
+   - Bottom right: Yearly average odds difference trends
+   - Secondary axis (top left): Number of fights per month
+   - Reference line: 50% accuracy baseline
+   
+   Insights it attempts to answer:
+   - Are bookmakers getting better at predicting outcomes over time?
+   - Has the average confidence level (odds difference) changed over the years?
+   - Are there seasonal or temporal patterns in prediction accuracy?
+   - How has the MMA betting market evolved in terms of fight competitiveness?
+
+
+5. BY WEIGHT CLASS / GENDER
+   -------------------------
+   File: 5_by_weight_class_gender.png
+   
+   Description:
+   Comparative analysis of odds accuracy across different weight classes and
+   genders, identifying categories where predictions are more or less reliable.
+   
+   What it plots:
+   - Top left: Horizontal bar chart of favorite win rates by weight class
+   - Top right: Bar chart comparing accuracy between MALE and FEMALE fights
+   - Bottom left: Grouped bar chart showing accuracy by weight class and gender
+     (top 10 weight classes)
+   - Bottom right: Horizontal bar chart of upset rates by weight class
+   - Colors: Color gradients based on win/upset rates; blue for MALE, pink
+     for FEMALE
+   - Sample sizes displayed for each category
+   
+   Insights it attempts to answer:
+   - Are odds more accurate for certain weight classes?
+   - Do predictions perform differently for male vs female fights?
+   - Which weight classes have the highest upset rates?
+   - Are there weight class/gender combinations where bookmakers struggle more?
+
+
+6. CONFUSION MATRIX / OUTCOME HEATMAP
+   -----------------------------------
+   File: 6_confusion_matrix.png
+   
+   Description:
+   Heatmaps showing the relationship between predicted winners (based on odds)
+   and actual winners, providing a comprehensive view of prediction performance.
+   
+   What it plots:
+   - Left panel: Normalized confusion matrix (percentages) showing predicted
+     vs actual winners
+   - Right panel: Absolute count confusion matrix (number of fights)
+   - Rows: Predicted winner (Red or Blue, based on higher implied probability)
+   - Columns: Actual winner (Red or Blue)
+   - Color intensity: Percentage (left) or count (right)
+   - Color scheme: Green-yellow-red gradient (left), blue gradient (right)
+   
+   Insights it attempts to answer:
+   - What is the overall accuracy of odds-based predictions?
+   - Are there systematic biases (e.g., over-predicting Red or Blue)?
+   - How often do predictions match actual outcomes?
+   - What percentage of fights result in correctly predicted winners?
+
+
+7. ODDS DIFFERENCE DISTRIBUTION
+   ------------------------------
+   File: 7_odds_difference_distribution.png
+   
+   Description:
+   Distribution analysis comparing odds differences between correctly and
+   incorrectly predicted fights, revealing patterns in prediction success.
+   
+   What it plots:
+   - Left panel: Violin plot showing distribution of odds differences for
+     correct vs incorrect predictions
+   - Middle panel: Box plot comparison of odds differences by prediction
+     accuracy
+   - Right panel: Overlapping histograms showing frequency distributions
+     for correct vs incorrect predictions
+   - Colors: Green for correct predictions, red for incorrect predictions
+   - Statistical markers: Mean and median lines in violin plots
+   
+   Insights it attempts to answer:
+   - Do correct predictions tend to have different odds differences than
+     incorrect ones?
+   - Are predictions more accurate when odds differences are larger or smaller?
+   - What is the typical odds difference range for successful predictions?
+   - Is there a relationship between odds spread and prediction reliability?
+
+================================================================================
+TECHNICAL DETAILS
+================================================================================
+
+Odds Conversion:
+- Negative odds (favorite): probability = |odds| / (|odds| + 100) × 100
+- Positive odds (underdog): probability = 100 / (odds + 100) × 100
+
+Favorite Determination:
+- Fighter with negative odds (or smaller positive odds) is the favorite
+- When both have negative odds, less negative = more favorite
+- When both have positive odds, smaller = more favorite
+
+Key Metrics:
+- Odds difference: |R_odds - B_odds| (measure of confidence/competitiveness)
+- Favorite win rate: percentage of times favorite actually won
+- Prediction accuracy: percentage of times predicted winner (higher probability)
+  matched actual winner
+- Upset rate: percentage of times underdog won
+
+Data Filtering:
+- Removes fights with missing or invalid odds
+- Excludes draws (only Red/Blue winners analyzed)
+- Filters out bins/categories with insufficient sample sizes (<5-10 fights)
+- Final analysis based on ~4,167 valid fights
+
+================================================================================
+USAGE
+================================================================================
+
+To generate all visualizations:
+    python odds_visualization.py
+
+Output:
+    All plots saved to: odds_visualizations/
+
+Dependencies:
+    - pandas
+    - matplotlib
+    - seaborn
+    - numpy
+
+================================================================================
