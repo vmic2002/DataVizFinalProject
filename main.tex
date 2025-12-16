@@ -1,0 +1,391 @@
+\documentclass{article}
+
+% Recommended packages
+
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{url}
+\usepackage{float}
+
+% Use this for accepted version
+\usepackage[accepted]{icml2025}
+
+% For cleveref
+\usepackage[capitalize,noabbrev]{cleveref}
+
+% Running title
+\icmltitlerunning{Data Visualization UFC Fights}
+
+\begin{document}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{ Data Visualization UFC Fights}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\twocolumn[
+\icmltitle{Data Visualizations for UFC Fights}
+
+\begin{icmlauthorlist}
+\icmlauthor{Victor Micha}{ep}
+\end{icmlauthorlist}
+
+\icmlaffiliation{ep}{École Polytechnique, Institut Polytechnique de Paris}
+
+\icmlcorrespondingauthor{Victor Micha}{victor.micha@polytechnique.edu}
+
+
+\vskip 0.3in
+
+\begin{abstract}
+This project presents a comprehensive suite of data visualizations analyzing professional Mixed Martial Arts (MMA) fight data spanning over 5,500 fights and 5,000+ fighters. Four complementary visualization categories explore different analytical dimensions: (1) an interactive D3.js globe visualization displaying geographic fighter distribution and title fights, (2) statistical analysis of betting odds accuracy through seven focused plots, (3) gender-based comparison of fighter physical and performance characteristics, and (4) temporal tracking of elite fighter career trajectories. The visualization suite demonstrates how different visualization techniques---from interactive web-based exploration to statistical plots---can provide multi-dimensional insights into sports data, serving fans, analysts, coaches, and researchers with actionable intelligence about the MMA landscape.
+\end{abstract}
+] 
+
+\section{Introduction}
+
+\subsection{Dataset Description}
+
+This project analyzes professional Mixed Martial Arts (MMA) fight data through multiple interconnected datasets:
+
+\textbf{per\_fight\_data.csv (5,529 fights):} Individual fight records containing fighters, betting odds, winners, locations, dates, weight classes, gender, and title bout information.
+
+\textbf{fighter\_stats\_with\_gender.csv (1,333 fighters):} Comprehensive fighter profiles including physical attributes (height, weight, reach, age), performance statistics (wins, losses, striking accuracy, takedown metrics), stance, and gender classification.
+
+\textbf{pro\_mma\_fighters.csv (5,152 fighters):} Detailed fighter profiles with biographical data, country of origin, win/loss breakdowns by method (KO/submission/decision), and weight class information.
+
+\textbf{countries.geo.json:} GeoJSON data for world map visualization, enabling geographic analysis of fighter distribution.
+
+The dataset encompasses a comprehensive view of the MMA landscape, covering fighters from numerous countries, multiple weight classes (from Flyweight to Heavyweight), both male and female divisions, and fight outcomes spanning several years (approximately 2014-2020).
+
+\subsection{Purpose of Visualizations}
+
+The visualization suite serves four complementary analytical purposes:
+
+\textbf{(a) Geographic Analysis:} Understanding the global distribution of MMA fighters and title fights, identifying regional concentrations of talent, and exploring country-specific fighter profiles and title bout occurrences.
+
+\textbf{(b) Betting Market Analysis:} Evaluating the accuracy of bookmaker predictions through odds analysis, identifying patterns in upset frequencies, examining temporal trends in prediction accuracy, and understanding how betting markets assess fight competitiveness across different categories.
+
+\textbf{(c) Demographic \& Performance Comparison:} Comparing physical and performance characteristics between male and female fighters, identifying which features are most predictive of success, and understanding correlation patterns between various fighter attributes.
+
+\textbf{(d) Temporal Trends:} Tracking fighter performance evolution over time, identifying career trajectories of top fighters, and understanding how win rates and activity levels change across years.
+
+Together, these visualizations provide stakeholders (fans, analysts, fighters, coaches, and researchers) with multi-dimensional insights into the sport of MMA, from global geographic patterns to individual fighter performance trajectories.
+
+
+\section{Design Choices}
+
+\subsection{Interactive Globe Visualization (HTML/D3.js)}
+
+\textbf{Output:} Interactive web-based visualization with three linked SVG panels
+
+\subsubsection{Spatial Layout Design}
+
+The three-panel horizontal layout (globe + fighter stats + title fights) was chosen to create a natural left-to-right information flow. The globe serves as the primary interaction point, with contextual information revealed in the right panels upon country hover. See Figure \ref{fig:globe_visualization} for a screenshot.
+
+\subsubsection{Interaction Model - Hover vs Click}
+
+A hover-based interaction model was deliberately chosen over click-based interaction for several reasons: (1) Reduces interaction cost---users can rapidly explore multiple countries without repeated clicking, (2) Maintains context---users can see the geographic location while viewing country-specific data, (3) Enables fluid exploration---smooth transitions between countries encourage discovery, and (4) Prevents modal states---no ``locked'' selection that users must manually clear.
+
+\subsubsection{Color Scheme - Dark Theme}
+
+The dark aesthetic serves multiple purposes: visual hierarchy where bright data elements (colored bars, text) stand out clearly against dark backgrounds, reduced eye strain for extended exploration sessions, modern aesthetic aligning with contemporary data visualization trends, and focus direction drawing attention to data rather than interface chrome.
+
+\subsubsection{Fighter Statistics and Title Fights}
+
+The stacked horizontal bar chart design for wins/losses by method provides immediate visual comparison through color coding (distinct colors for each finish type with darker shades for losses), proportional scaling (bars scale to the maximum in the displayed set), information density (displays 8 fighters simultaneously), and metadata inclusion (age, height, weight).
+
+The title fights panel uses a card-based layout mimicking traditional fight promotion materials, with red vs blue corner color coding, proportional odds bars showing implied probabilities, winner indication via gold medal emoji, and contextual metadata (date, location, weight class, gender).
+
+
+\subsection{Betting Odds Accuracy Analysis}
+
+\textbf{Output:} Seven static visualizations exploring different facets of odds accuracy
+
+Rather than a single comprehensive visualization, seven focused plots were created to address distinct analytical questions. This modular approach allows each visualization to be optimized for its specific purpose.
+
+\subsubsection{Visualization Design Rationale}
+
+\textbf{Confidence vs Accuracy (Scatter Plot):} Scatter plots effectively show relationships between continuous variables (odds difference vs accuracy). Encoding sample size through both point size and color (viridis colormap) helps users assess statistical reliability---larger, darker points represent more robust data points.
+
+\textbf{Win Rates (Bar Charts):} Bar charts are optimal for comparing magnitudes. The dual-panel design allows both high-level summary (favorites vs underdogs overall) and detailed breakdown (favorites by odds difference category). Green/red color coding leverages universal color associations (green=success, red=upset).
+
+\textbf{Upset Frequency:} The dual approach shows both relative (percentage) and absolute (count) perspectives. The percentage view reveals trends, while the stacked bars provide context about sample size and absolute frequency.
+
+\textbf{Temporal Trends:} The 2×2 grid layout enables comparison along two dimensions: time granularity (monthly detail vs yearly trends) and metric type (accuracy vs confidence). Secondary axes provide crucial context about data availability.
+
+\textbf{Category Analysis:} Horizontal bars work well for categorical comparisons with many categories (weight classes). The grouped bar chart directly compares gender within weight class, enabling identification of category-specific patterns.
+
+\textbf{Confusion Matrix:} Showing both normalized and absolute versions allows users to assess both proportional accuracy and absolute scale. Different color schemes (diverging vs sequential) are optimized for each representation type.
+
+\textbf{Distribution Comparison:} Three complementary visualizations (violin plots, box plots, histograms) each reveal different distributional aspects. The green/red color scheme maintains consistency with earlier visualizations.
+
+
+\subsection{Statistical Fighter Comparison}
+
+\textbf{Output:} Eight static plots comparing male and female fighters
+
+\subsubsection{Gender Comparison Focus}
+
+The entire visualization suite is organized around gender comparison, reflecting the analytical goal of understanding performance differences and similarities between male and female divisions. This focus required careful design to ensure fair comparison while acknowledging inherent physical differences.
+
+\subsubsection{Distribution Plots}
+
+KDE (Kernel Density Estimation) curves provide smooth, interpretable representations of distributions without the arbitrary binning of histograms (see Figures~\ref{fig:height_dist}, \ref{fig:weight_dist}, \ref{fig:reach_dist}, \ref{fig:age_dist}). The overlapping design enables direct visual comparison of distribution shapes, central tendencies, and spread. Statistical annotations (mean, std, n) provide quantitative grounding.
+
+Height, weight, reach, and age were selected as they represent key physical attributes in combat sports and temporal factors (age as career stage proxy). These features are also objectively measurable and consistently available.
+
+\subsubsection{Correlation Analysis}
+
+Separate correlation heatmaps for each gender (Figures~\ref{fig:corr_male}, \ref{fig:corr_female}) avoid Simpson's paradox and enable identification of gender-specific correlation patterns. The masked upper triangle eliminates redundancy, and the coolwarm diverging colormap effectively highlights both positive and negative correlations with neutral zero.
+
+\subsubsection{Feature Importance}
+
+Random Forest regression models (Figures~\ref{fig:feat_male}, \ref{fig:feat_female}) predict total wins from all available features. Random Forest was chosen for its ability to handle non-linear relationships and feature interactions. Separate models acknowledge that predictors of success may differ between genders. Horizontal bars facilitate feature name readability.
+
+
+\subsection{Temporal Performance Tracking}
+
+\textbf{Output:} Six line plots tracking top fighters across years
+
+\subsubsection{Line Plot Design}
+
+Multi-line charts with color-coded fighters are optimal for showing temporal trends and trajectories (see Figures~\ref{fig:wins_male}, \ref{fig:wins_female}, \ref{fig:winrate_male}, \ref{fig:winrate_female}, \ref{fig:fights_male}, \ref{fig:fights_female}). Multiple lines enable direct comparison of fighter careers, while color coding distinguishes individual fighters. Separate plots by gender recognize division differences.
+
+\subsubsection{Metric Selection}
+
+Three metrics provide complementary insights: (1) Wins per year---absolute success measure, (2) Win rate (percentage)---efficiency/dominance measure normalized for activity, and (3) Fights per year---activity level indicator. Together, they distinguish between different success patterns: dominant active fighters (high wins, high rate, high activity), volume fighters (high wins, low rate, high activity), and selective high-success fighters (low wins, high rate, low activity).
+
+\subsubsection{Fighter Selection}
+
+Focusing on the top 2 fighters per gender maintains visual clarity (more fighters would create cluttered plots), highlights the most successful fighters that fans recognize, enables detailed trajectory examination, and provides representative examples of elite careers. This is a deliberate tradeoff optimizing for detailed examination rather than broad overview.
+
+
+\section{Technical Details}
+
+\subsection{Globe Visualization Implementation}
+
+\textbf{Technologies:} D3.js v7, HTML5/CSS3, JavaScript ES6
+
+Each panel is an independent SVG element, allowing separate coordinate systems, independent rendering, and modular organization. All three data sources are loaded in parallel using Promise.all to minimize loading time.
+
+Two primary data structures enable fast interaction: \textit{fightersByCountry} maps country names to arrays of fighter objects sorted by wins, enabling O(1) lookup; \textit{titleFightsByCountry} maps countries to fight objects with pre-computed winner information and implied probabilities.
+
+The D3 Natural Earth projection provides balanced distortion across all regions. The projection's scale and translation parameters are dynamically updated for zoom (0.6× to 2.5×) and pan operations. American odds are converted to implied probabilities using standard formulas: negative odds use $|\text{odds}|/(|\text{odds}|+100)\times100$, while positive odds use $100/(\text{odds}+100)\times100$.
+
+\subsection{Odds Visualization Implementation}
+
+\textbf{Technologies:} Python 3.x, pandas, matplotlib, seaborn, numpy
+
+The fight data is loaded and immediately filtered to remove incomplete records, ensuring approximately 4,167 valid fights. American odds are converted to implied probabilities, and the fighter with higher implied probability is designated as the favorite.
+
+Several derived features are created: odds\_difference (absolute difference between fighter odds), prediction\_correct (whether favorite won), upset (underdog victory), and odds\_diff\_category (categorical binning).
+
+Continuous odds differences are binned into custom ranges (0-25, 25-50, 50-100, 100-150, 150-200, 200-300, 300-500, 500+) to balance sample size and granularity. Date strings are parsed to enable monthly and yearly temporal analysis. Consistent color schemes enhance interpretability: green represents correct predictions/favorites while red represents incorrect/underdogs.
+
+\subsection{Statistical Comparison Implementation}
+
+\textbf{Technologies:} Python 3.x, pandas, matplotlib, seaborn, scikit-learn, numpy
+
+Fighter statistics are loaded and partitioned by gender. The top 1000 fighters per gender ranked by total wins are selected, focusing on successful fighters with substantial records. Missing data is handled through complete-case analysis (dropna) for distribution plots and mean imputation for machine learning models.
+
+KDE provides smooth probability density estimates for each feature without histogram binning artifacts. Pearson correlation coefficients are calculated separately for each gender to avoid Simpson's paradox. Random Forest regression models (100 trees) predict total wins from all features, providing feature importance scores based on impurity reduction.
+
+\subsection{Temporal Tracking Implementation}
+
+\textbf{Technologies:} Python 3.x, pandas, matplotlib, datetime
+
+Fight dates (M/D/YYYY format) are parsed to datetime objects with year extraction. For each fight, both fighters' statistics are updated bidirectionally. Fighter statistics are aggregated by year, computing wins, losses, total fights, and win rate.
+
+Fighters must meet minimum thresholds: at least 5 total fights and 3+ years of data. Within each gender, fighters are ranked by total career wins, with the top 2 selected for visualization. Each fighter is represented as a line with distinct color and circular markers.
+
+\subsection{Common Technical Patterns}
+
+The project follows clean separation: data files in \texttt{data/}, output plots in \texttt{plots/} and \texttt{odds\_visualizations/}, scripts in root directory, and web assets in \texttt{js/}.
+
+Performance optimization strategies include pre-computed lookups (country-to-fighters mappings), efficient data structures (dictionaries for O(1) access), vectorized operations (pandas/numpy), and D3 data joins (minimizing DOM manipulation).
+
+Reproducibility is ensured through fixed random seeds (random\_state=42), standardized parameters (DPI, figure sizes, color schemes), and clear documentation of dependencies and data processing steps.
+
+
+\section{Conclusion}
+
+This project demonstrates a comprehensive approach to sports data visualization, combining interactive web-based exploration (D3.js globe), statistical analysis (Python/matplotlib), and multi-dimensional perspectives on MMA fight data. Each visualization category addresses specific analytical questions while maintaining consistent design principles: clarity, interactivity where beneficial, statistical rigor, and aesthetic coherence. The technical implementation leverages industry-standard tools and best practices, ensuring maintainability, reproducibility, and extensibility for future analysis.
+
+\onecolumn
+
+\section*{Appendix: Visualizations}
+
+\subsection*{Globe Visualizations}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{globe_visualization.png}
+\caption{Geographic view of fighters and title fights}
+\label{fig:globe_visualization}
+\end{figure}
+
+
+\subsection*{Betting Odds Analysis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{1_confidence_vs_accuracy.png}
+\caption{Odds confidence vs prediction accuracy. Larger, darker points represent more fights.}
+\label{fig:odds_conf}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{2_favorite_vs_underdog_win_rates.png}
+\caption{Favorite vs underdog win rates overall and by odds difference category.}
+\label{fig:odds_winrates}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{3_upset_frequency_by_margin.png}
+\caption{Upset frequency by odds margin showing both percentage and absolute counts.}
+\label{fig:odds_upsets}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{4_temporal_trends.png}
+\caption{Temporal trends in odds accuracy and confidence (monthly and yearly).}
+\label{fig:odds_temporal}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{5_by_weight_class_gender.png}
+\caption{Odds accuracy and upset rates by weight class and gender.}
+\label{fig:odds_category}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{6_confusion_matrix.png}
+\caption{Confusion matrix showing predicted vs actual winners (normalized and absolute).}
+\label{fig:odds_confusion}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{7_odds_difference_distribution.png}
+\caption{Distribution comparison of odds differences for correct vs incorrect predictions.}
+\label{fig:odds_dist}
+\end{figure}
+
+\subsection*{Gender Comparison - Physical Distributions}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{height_distribution_gender_comparison.png}
+\caption{Height distribution comparison between male and female fighters using KDE.}
+\label{fig:height_dist}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{weight_distribution_gender_comparison.png}
+\caption{Weight distribution comparison between male and female fighters using KDE.}
+\label{fig:weight_dist}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{reach_distribution_gender_comparison.png}
+\caption{Reach distribution comparison between male and female fighters using KDE.}
+\label{fig:reach_dist}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{age_distribution_gender_comparison.png}
+\caption{Age distribution comparison between male and female fighters using KDE.}
+\label{fig:age_dist}
+\end{figure}
+
+\subsection*{Correlation Analysis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{correlation_heatmap_male.png}
+\caption{Correlation heatmap for male fighters showing relationships between features and wins.}
+\label{fig:corr_male}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{correlation_heatmap_female.png}
+\caption{Correlation heatmap for female fighters showing relationships between features and wins.}
+\label{fig:corr_female}
+\end{figure}
+
+\subsection*{Feature Importance}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{feature_importance_male.png}
+\caption{Random Forest feature importance for predicting male fighter wins.}
+\label{fig:feat_male}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{feature_importance_female.png}
+\caption{Random Forest feature importance for predicting female fighter wins.}
+\label{fig:feat_female}
+\end{figure}
+
+\subsection*{Temporal Trends - Top Fighters}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{wins_over_time_top2_male.png}
+\caption{Wins per year for top 2 male fighters showing career trajectories.}
+\label{fig:wins_male}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{wins_over_time_top2_female.png}
+\caption{Wins per year for top 2 female fighters showing career trajectories.}
+\label{fig:wins_female}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{win_rate_over_time_top2_male.png}
+\caption{Win rate over time for top 2 male fighters showing efficiency trends.}
+\label{fig:winrate_male}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{win_rate_over_time_top2_female.png}
+\caption{Win rate over time for top 2 female fighters showing efficiency trends.}
+\label{fig:winrate_female}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fights_over_time_top2_male.png}
+\caption{Fights per year for top 2 male fighters showing activity levels.}
+\label{fig:fights_male}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fights_over_time_top2_female.png}
+\caption{Fights per year for top 2 female fighters showing activity levels.}
+\label{fig:fights_female}
+\end{figure}
+
+\end{document}
