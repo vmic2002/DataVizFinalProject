@@ -1,6 +1,6 @@
 // Visualization context to keep sizes and shared config in one place
 const vizCtx = {
-  // Overall SVG sizes
+  // Overall SVG sizes (will be calculated dynamically)
   globeWidth: 800,
   globeHeight: 800,
   statsWidth: 800,
@@ -14,6 +14,7 @@ const vizCtx = {
   // Data cache
   fightersByCountry: {}, // { [countryName]: Fighter[] }
   fightsByCountry: {}, // { [countryName]: Fight[] }
+  worldGeo: null, // Store GeoJSON for re-rendering on resize
 
   // D3 handles we may want to reuse
   globeSvg: null,
@@ -29,29 +30,92 @@ const vizCtx = {
   globePanY: 0,
 
   // Stats panel configuration
-  maxFightersPerCountry: 8,
-  maxFightsPerCountry: 5,
+  maxFightersPerCountry: 12,
+  maxFightsPerCountry: 7,
 };
+
+/**
+ * Calculate SVG sizes based on screen width
+ */
+function calculateSvgSizes() {
+  const screenWidth = window.innerWidth;
+  const svgWidth = (screenWidth / 3) * 0.8;
+  
+  // Keep aspect ratio, use width to determine height
+  const aspectRatio = 1; // Square SVGs
+  const svgHeight = svgWidth * aspectRatio;
+  
+  vizCtx.globeWidth = svgWidth;
+  vizCtx.globeHeight = svgHeight;
+  vizCtx.statsWidth = svgWidth;
+  vizCtx.statsHeight = svgHeight;
+  vizCtx.fightsWidth = svgWidth;
+  vizCtx.fightsHeight = svgHeight;
+}
 
 /**
  * Entry point called from body onload in index.html
  */
 function createViz() {
   console.log("createViz updated !!!!!!!");
+  calculateSvgSizes();
   setupLayout();
   loadDataAndRender();
+  
+  // Add resize event listener
+  window.addEventListener('resize', handleResize);
 }
 
 /**
- * Create the page layout: two SVGs side by side inside #viz
+ * Handle window resize - recalculate sizes and re-render
+ * Uses debouncing to avoid excessive re-renders
+ */
+let resizeTimeout;
+function handleResize() {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    calculateSvgSizes();
+    
+    // Update SVG dimensions
+    if (vizCtx.globeSvg) {
+      vizCtx.globeSvg
+        .attr("width", vizCtx.globeWidth)
+        .attr("height", vizCtx.globeHeight);
+    }
+    if (vizCtx.statsSvg) {
+      vizCtx.statsSvg
+        .attr("width", vizCtx.statsWidth)
+        .attr("height", vizCtx.statsHeight);
+    }
+    if (vizCtx.fightsSvg) {
+      vizCtx.fightsSvg
+        .attr("width", vizCtx.fightsWidth)
+        .attr("height", vizCtx.fightsHeight);
+    }
+    
+    // Re-render visualizations if data is already loaded
+    if (vizCtx.worldGeo) {
+      renderGlobe(vizCtx.worldGeo);
+      renderStatsPanel(null); // Reset to empty state
+      renderFightsPanel(null); // Reset to empty state
+    }
+  }, 150); // Debounce: wait 150ms after last resize event
+}
+
+/**
+ * Create the page layout: three SVGs side by side inside #viz
  */
 function setupLayout() {
   const container = d3.select("#viz");
 
-  // Simple side‑by‑side layout using flexbox
+  // Clear container if it already has content (for resize)
+  container.selectAll("*").remove();
+
+  // Centered side‑by‑side layout using flexbox
   container
     .style("display", "flex")
     .style("flex-direction", "row")
+    .style("justify-content", "center")
     .style("align-items", "flex-start")
     .style("gap", "16px")
     .style("font-family", "system-ui, -apple-system, BlinkMacSystemFont, sans-serif");
@@ -124,6 +188,8 @@ function loadDataAndRender() {
     d3.csv("data/per_fight_data.csv", fightRowParser),
   ])
     .then(([worldGeo, fighters, fights]) => {
+      // Store worldGeo for re-rendering on resize
+      vizCtx.worldGeo = worldGeo;
       buildFightersByCountry(fighters);
       buildFightsByCountry(fights);
       renderGlobe(worldGeo);
