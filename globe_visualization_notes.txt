@@ -1,0 +1,94 @@
+MMA Fights Visualization - README
+==================================
+
+Overview
+--------
+Interactive visualization of professional MMA fighters and title fights across the globe. Three linked SVGs display geographic distribution, fighter statistics, and fight details.
+
+Data Sources
+------------
+- countries.geo.json: World map GeoJSON data
+- pro_mma_fighters.csv: Fighter profiles (name, country, wins/losses breakdown)
+- per_fight_data.csv: Individual fight records (fighters, odds, winners, locations)
+
+SVG 1: Globe Map (Left, 800x800px)
+-----------------------------------
+Functionality:
+- World map using D3 Natural Earth projection
+- Countries colored: green (#2d8b57) if they have fighters, gray (#3b4a5a) otherwise
+- Hover highlights country with white border
+- Drag to pan the map
+- Zoom slider (0.6x - 2.5x) with real-time value display
+- Graticule lines and radial gradient water background
+
+Interactivity:
+- Hovering a country updates the two right panels
+- Panning updates projection translation
+- Zoom updates projection scale
+
+Design:
+- Dark theme with gradient water (#1f3b56 to #0b1724)
+- Subtle graticule overlay (15% opacity white)
+- Country borders with hover feedback
+
+SVG 2: Fighter Statistics (Middle, 800x800px)
+----------------------------------------------
+Functionality:
+- Displays top fighters from hovered country, sorted by wins (descending)
+- Shows up to 8 fighters per country
+- Each fighter displays:
+  - Name, nickname, age, height, weight
+  - Stacked horizontal bars for wins (KO/Sub/Dec/Other)
+  - Stacked horizontal bars for losses (KO/Sub/Dec/Other)
+  - Total win/loss counts
+
+Color Scheme:
+- Wins: Red (#f97373), Purple (#a855f7), Blue (#3b82f6), Gray (#9ca3af)
+- Losses: Dark Red (#dc2626), Dark Purple (#9333ea), Dark Blue (#2563eb), Dark Gray (#6b7280)
+- Legend shows both win and loss colors for each outcome type
+
+Design:
+- Dark panel background (#050814) with rounded corners
+- Bars scale proportionally to max wins/losses in displayed set
+- Empty state shows instruction text when no country selected
+
+SVG 3: Title Fights (Right, 800x800px)
+--------------------------------------
+Functionality:
+- Displays title fights that occurred in hovered country
+- Card-based layout (85px height per fight)
+- Each fight card shows:
+  - R_fighter (red, left) vs B_fighter (blue, right)
+  - Gold medal emoji (🥇) next to winner
+  - Odds bars: horizontal bars proportional to implied probabilities (renormalized to 100%)
+  - Odds conversion: negative odds → |odds|/(|odds|+100), positive → 100/(odds+100)
+  - Metadata: date, location, weight class, gender
+
+Design:
+- Card layout with rounded rectangles (#0f1724 background)
+- Red/blue color coding for fighters matches corner assignments
+- Odds bars use same red/blue colors, width represents probability
+- Winner indicated by gold medal emoji
+- Empty state when no country selected or no title fights
+
+Interactivity
+-------------
+- All three SVGs are linked: hovering a country on the globe updates both right panels
+- Globe supports pan (drag) and zoom (slider)
+- No click interactions - hover-only for country selection
+
+Design Theme
+------------
+- Dark color scheme throughout (#050814, #0f1724 backgrounds)
+- Gradient text header (red to blue)
+- Consistent typography (system fonts)
+- Rounded corners and subtle borders
+- Professional, modern aesthetic
+
+Technical Notes
+---------------
+- D3.js v7 for data binding and SVG manipulation
+- Natural Earth projection for world map
+- Flexbox layout for three-panel arrangement
+- Data pre-processed into country-based lookups for performance
+- Winner field in fight data uses "Red"/"Blue" not fighter names
