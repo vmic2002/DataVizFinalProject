@@ -63,7 +63,7 @@ python odds_visualization.py
 python fighters_over_time.py
 
 # Interactive globe (open in browser)
-open globe_visualization.html
+python -m http.server 8000
 ```
 
 ## Project Structure
